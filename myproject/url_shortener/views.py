@@ -5,21 +5,26 @@ from models import Table
 
 
 def form(request):
-   
+
     if request.method == "POST":
-        
+
         try:
             num = Table.objects.get(url=request.POST["nombre"]).id
             return HttpResponse("La url cortada es :"+str(num))
         except Table.DoesNotExist:
-            record = Table(url= request.POST["nombre"].replace('%3A',':').replace('%2F','/'))  
+            record = Table(url= request.POST["nombre"].replace('%3A',':').replace('%2F','/'))
             record.save()
             return HttpResponse("La url cortada es :" +"<a href="+Table.objects.get(url=request.POST["nombre"]).url +">"+str(Table.objects.get(url=request.POST["nombre"]).id)+"</a>")
     form=""
-    form+="<body><h1>Url Shortener </h1><form method=post>Escribe la url:<input type=text name= nombre value=http:// /> <br/><input type=submit value=Enviar /></form></body></html>"   
-    
-    return HttpResponse(form)
-    
+    form+="<body><h1>Url Shortener </h1><form method=post>Escribe la url:<input type=text name= nombre value=http:// /> <br/><input type=submit value=Enviar /></form>"
+    contents=Table.objects.all()
+    respues="<ul>"
+    for cont in contents:
+        print cont
+        respues+="<li> <a href="+str(cont.id)+">"+str(cont.url)+"</a></li>"
+    respues+="</ul></body></html>"
+    return HttpResponse(form+respues)
+
 
 def show_url (request,num):
     try:
